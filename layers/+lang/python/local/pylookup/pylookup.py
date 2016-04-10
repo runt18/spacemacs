@@ -47,7 +47,7 @@ def build_book(s, num):
                                 ("reference", "ref"),
                                 ("", "etc")):
         if matcher in s:
-            return replacement if num == 1 else "%s/%d" % (replacement, num)
+            return replacement if num == 1 else "{0!s}/{1:d}".format(replacement, num)
 
 def trim(s):
     """
@@ -165,8 +165,7 @@ class IndexProcessor( htmllib.HTMLParser ):
                 if VERBOSE:
                     self.desc_cnt += 1
                     if self.desc_cnt % 100 == 0:
-                        sys.stdout.write("%04d %s\r" \
-                                             % (self.desc_cnt, self.desc.ljust(80)))
+                        sys.stdout.write("{0:04d} {1!s}\r".format(self.desc_cnt, self.desc.ljust(80)))
 
                 # extract fist element
                 #  ex) __and__() (in module operator)
@@ -204,9 +203,9 @@ def update(db, urls, append=False):
             if not parsed.scheme or parsed.scheme == "file":
                 dst = abspath(expanduser(parsed.path))
                 if not os.path.exists(dst):
-                    print("Error: %s doesn't exist" % dst)
+                    print("Error: {0!s} doesn't exist".format(dst))
                     exit(1)
-                url = "file://%s" % dst
+                url = "file://{0!s}".format(dst)
             else:
                 url = parsed.geturl()
 
@@ -225,7 +224,7 @@ def update(db, urls, append=False):
             for index_url in potential_urls:
                 try:
                     print "Wait for a few seconds..."
-                    print "Fetching index from '%s'" % index_url
+                    print "Fetching index from '{0!s}'".format(index_url)
 
                     index = urllib.urlopen(index_url).read()
                     if not issubclass(type(index), str):
@@ -236,14 +235,14 @@ def update(db, urls, append=False):
                         parser.feed(index)
 
                     # success, we don't need to try other potential urls
-                    print "Loaded index from '%s'" % index_url
+                    print "Loaded index from '{0!s}'".format(index_url)
                     success = True
                     break
                 except IOError:
-                    print "Error: fetching file from '%s'" % index_url
+                    print "Error: fetching file from '{0!s}'".format(index_url)
 
             if not success:
-                print "Failed to load index for input '%s'" % url
+                print "Failed to load index for input '{0!s}'".format(url)
 
 
 def lookup(db, key, format_spec, out=sys.stdout, insensitive=True, desc=True):
@@ -262,7 +261,7 @@ def lookup(db, key, format_spec, out=sys.stdout, insensitive=True, desc=True):
             while True:
                 e = pickle.load(f)
                 if matcher(e, key):
-                    out.write('%s\n' % format(e, format_spec))
+                    out.write('{0!s}\n'.format(format(e, format_spec)))
         except EOFError:
             pass
 
@@ -284,7 +283,7 @@ def cache(db, out=sys.stdout):
         except EOFError:
             pass
         for k in keys:
-            out.write('%s\n' % k)
+            out.write('{0!s}\n'.format(k))
 
 if __name__ == "__main__":
     import optparse
